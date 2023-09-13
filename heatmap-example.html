@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>pydeck</title>
+        <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.13.0/mapbox-gl.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" />
+    <script src='https://cdn.jsdelivr.net/npm/@deck.gl/jupyter-widget@~8.8.*/dist/index.js'></script>
+    <style>
+    body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#deck-container {
+  width: 100vw;
+  height: 100vh;
+}
+
+#deck-container canvas {
+  z-index: 1;
+  background: none;
+}
+    </style>
+  </head>
+  <body>
+    <div id="deck-container">
+    </div>
+  </body>
+  <script>
+    const container = document.getElementById('deck-container');
+    const jsonInput = {
+  "initialViewState": {
+    "bearing": -27.36,
+    "latitude": 52.2323,
+    "longitude": -1.415,
+    "maxZoom": 15,
+    "minZoom": 5,
+    "pitch": 40.5,
+    "zoom": 6
+  },
+  "layers": [
+    {
+      "@@type": "HexagonLayer",
+      "autoHighlight": true,
+      "coverage": 1,
+      "data": [
+        {
+          "lat": 47.2505647,
+          "lon": 0.2909462,
+          "name": "Bertrand"
+        },
+        {
+          "lat": 47.2505647,
+          "lon": 0.2909462,
+          "name": "Bertrand"
+        },
+        {
+          "lat": 47.2505647,
+          "lon": 0.2909462,
+          "name": "Bertrand"
+        },
+        {
+          "lat": 47.364807,
+          "lon": 0.8630235,
+          "name": "Robin"
+        },
+        {
+          "lat": 47.4169491,
+          "lon": 0.9620486,
+          "name": "Courtois"
+        },
+        {
+          "lat": 47.1001229,
+          "lon": 1.0136031,
+          "name": "Rodriguez"
+        },
+        {
+          "lat": 47.1001229,
+          "lon": 1.0136031,
+          "name": "Rodriguez"
+        },
+        {
+          "lat": 47.1001229,
+          "lon": 1.0136031,
+          "name": "Rodriguez"
+        },
+        {
+          "lat": 47.1001229,
+          "lon": 1.0136031,
+          "name": "Rodriguez"
+        },
+        {
+          "lat": 47.047381,
+          "lon": 1.108016,
+          "name": "Peron"
+        },
+        {
+          "lat": 47.442696,
+          "lon": 1.052782,
+          "name": "Bonnet"
+        },
+        {
+          "lat": 47.442696,
+          "lon": 1.052782,
+          "name": "Bonnet"
+        },
+        {
+          "lat": 47.440076,
+          "lon": 0.9984574,
+          "name": "Guillon"
+        },
+        {
+          "lat": 47.3688609,
+          "lon": 0.5162578,
+          "name": "Denis"
+        },
+        {
+          "lat": 47.0596693,
+          "lon": 0.554316,
+          "name": "Lejeune"
+        },
+        {
+          "lat": 47.4056477,
+          "lon": 0.6983736,
+          "name": "\u00c9tienne"
+        },
+        {
+          "lat": 47.4056477,
+          "lon": 0.6983736,
+          "name": "\u00c9tienne"
+        },
+        {
+          "lat": 47.3906154,
+          "lon": 0.8293644,
+          "name": "Chartier"
+        },
+        {
+          "lat": 47.4402237,
+          "lon": 1.0563599,
+          "name": "Barre"
+        }
+      ],
+      "elevationRange": [
+        0,
+        3000
+      ],
+      "elevationScale": 50,
+      "extruded": true,
+      "getPosition": "@@=[lng, lat]",
+      "id": "cc643d08-8fbe-407e-92ef-e3c654fd0009",
+      "pickable": true
+    }
+  ],
+  "mapProvider": "carto",
+  "mapStyle": "mapbox://styles/mapbox/light-v9",
+  "mapboxKey": "",
+  "views": [
+    {
+      "@@type": "MapView",
+      "controller": true
+    }
+  ]
+};
+    const tooltip = true;
+    const customLibraries = null;
+    const configuration = null;
+
+    const deckInstance = createDeck({
+                  container,
+      jsonInput,
+      tooltip,
+      customLibraries,
+      configuration
+    });
+
+  </script>
+</html>
