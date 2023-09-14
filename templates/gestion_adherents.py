@@ -2,18 +2,13 @@ import streamlit as st
 from sqlalchemy.exc import IntegrityError
 import pandas as pd
 import datetime
-from st_aggrid import AgGrid, GridOptionsBuilder
+from st_aggrid import AgGrid, GridOptionsBuilder, ColumnsAutoSizeMode
 from database.queries import adherents
 from utils.geocoding import get_lat_lng_from_address
 
 LAST_YEAR = datetime.datetime.now().year - 1
 FIELDS = ["nom", "prenom", "adresse_postale", "ville", "code_postal", "email", "genre_index", "annee_adhesion",
           "certificat_medical", "cotisation_payee", "selection_made"]
-
-st.set_page_config(
-    page_title="Gestion des adhésions",
-    layout="wide"
-)
 
 
 def clear_form():
@@ -110,6 +105,7 @@ def submit_form():
 
 def display_adherents():
     st.write(f"Liste des adhérents encore sous l'année {LAST_YEAR}")
+    search_text = st.text_input("Rechercher un adhérent par nom et/ou prénom", key="search_text")
     addAdherents = adherents.get_adherents_by_year(LAST_YEAR)
     adherents_data = [{
         "id": adherent.id,
@@ -123,10 +119,18 @@ def display_adherents():
         "cotisation_payee": adherent.cotisation_payee,
     } for adherent in addAdherents]
 
+    if search_text:
+        adherents_data = [adherent for adherent in adherents_data if
+                          search_text.lower() in adherent["nom"].lower() or search_text.lower() in adherent[
+                              "prenom"].lower()]
+
     if adherents:
         df = pd.DataFrame(adherents_data)
-        builder = GridOptionsBuilder.from_dataframe(df)
+
+        builder = GridOptionsBuilder.from_dataframe(df, columns_auto_size_mode=ColumnsAutoSizeMode.FIT_CONTENTS)
         builder.configure_selection(selection_mode='single', use_checkbox=True)
+        builder.configure_pagination(paginationPageSize=24, paginationAutoPageSize=False, enabled=True)
+        builder.configure_default_column(sorteable=True, filterable=True, filter=True)
         grid_options = builder.build()
         grid_options['enableCellSelection'] = False
         grid_options['columnDefs'][0]['checkboxSelection'] = True
@@ -134,9 +138,8 @@ def display_adherents():
             'width': 150,
             'resizable': True
         }
-
         return_value = AgGrid(df, gridOptions=grid_options)
-        st.button('Reinscrire')
+        st.button('Charger données')
 
         if 'selected_rows' in return_value and return_value['selected_rows']:
             selected_row = return_value['selected_rows'][0]
@@ -191,10 +194,7 @@ def display_form():
                                                     value=st.session_state.get("cotisation_payee", False))
 
 
-
-def run():
-    st.title("Page d'Adhésion")
-
+def run_gestion_adherent():
     clear_button = st.button("Vider le formulaire")
     if clear_button:
         clear_form()
@@ -216,6 +216,3 @@ def run():
 
     with col2:
         display_adherents()
-
-
-run()

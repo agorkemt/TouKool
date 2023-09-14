@@ -1,59 +1,56 @@
+import pandas as pd
 import streamlit as st
 from database.queries.stats_history import get_all_statistiques, get_statistique_by_year
-import matplotlib.pyplot as plt
+import plotly.express as px
 
+st.set_page_config(
+    page_title="Historiques",
+    layout="wide"
+)
+historical_stats = get_all_statistiques()
 
-def plot_pie_chart(data, title):
-    fig, ax = plt.subplots(figsize=(6, 6))  # Définit la taille de la figure
-    ax.pie(data.values(), labels=data.keys(), autopct='%1.1f%%', startangle=90,
-           colors=['#FF9999', '#66B2FF', '#99FF99', '#FFCC99', '#FFD700', '#C71585'])
-    ax.axis('equal')
-    plt.title(title)
-    return fig
-
-
-def display_charts_for_year(year):
-    stats = get_statistique_by_year(year)
-
-    # Camembert pour le ratio homme/femme
-    gender_data = {
-        'Homme': stats.male_ratio,
-        'Femme': stats.female_ratio
+# Define your data here (replace with your actual data)
+df = pd.DataFrame([
+    {
+        "Année": stat.year,
+        "Hommes": stat.male_ratio * 100,
+        "Femmes": stat.female_ratio * 100,
+        "Étudiant": stat.ratio_etudiant * 100,
+        "Demandeur d'emploi": stat.ratio_demandeur_emploi * 100,
+        "Ancien étudiant CEFIM": stat.ratio_ancien_etudiant_cefim * 100,
+        "Formateur CEFIM": stat.ratio_formateur_cefim * 100,
+        "Famille": stat.ratio_famille * 100,
+        "Enfant": stat.ratio_enfant * 100,
+        "Adulte": stat.ratio_adulte * 100,
+        "Chiffre d'affaires": stat.revenue
     }
-    gender_fig = plot_pie_chart(gender_data, "Ratio Homme/Femme")
+    for stat in historical_stats
+])
 
-    # Camembert pour les statuts
-    status_data = {
-        'Adulte': stats.ratio_adulte,
-        'Enfant': stats.ratio_enfant,
-        'Étudiant': stats.ratio_etudiant,
-        'Demandeur d\'emploi': stats.ratio_demandeur_emploi,
-        'Ancien étudiant CEFIM': stats.ratio_ancien_etudiant_cefim,
-        'Formateur CEFIM': stats.ratio_formateur_cefim
-    }
-    status_fig = plot_pie_chart(status_data, "Statuts")
-
-    # Camembert pour le ratio famille
-    family_data = {
-        'Famille': stats.ratio_famille,
-        'Non-Famille': 1 - stats.ratio_famille
-    }
-    family_fig = plot_pie_chart(family_data, "Ratio Famille")
-
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.pyplot(gender_fig)
-    with col2:
-        st.pyplot(status_fig)
-    with col3:
-        st.pyplot(family_fig)
+# Create Plotly figures
+fig1 = px.line(df, x="Année", y=["Hommes", "Femmes"], title="Évolution du Ratio Hommes/Femmes au fil des années")
+fig2 = px.line(df, x="Année", y=["Étudiant", "Demandeur d'emploi", "Ancien étudiant CEFIM", "Formateur CEFIM", "Famille"],
+               title="Évolution des Ratios par Statut au fil des années")
+fig3 = px.line(df, x="Année", y=["Enfant", "Adulte"], title="Évolution du Ratio Enfant/Adulte au fil des années")
+fig4 = px.line(df, x="Année", y="Chiffre d'affaires", title="Évolution du Chiffre d'Affaires au fil des années")
 
 
-def main():
-    st.title("Statistiques")
-    unique_years = sorted(list(set(s.year for s in get_all_statistiques())))
-    year_to_display = st.selectbox("Choisir une année", options=unique_years)
-    display_charts_for_year(year_to_display)
+if __name__ == "__main__":
+    tabs = st.tabs(
+        ["Nombre d'adhérents", "Évolutions", "Chiffre d'affaire"]
+    )
+    with tabs[0]:
+        st.plotly_chart(fig3)
 
+    with tabs[1]:
+        col1, col2= st.columns(2)
 
-main()
+        with col1:
+            st.plotly_chart(fig1)
+
+        with col2:
+            st.plotly_chart(fig2)
+
+    with tabs[2]:
+        st.plotly_chart(fig4)
+

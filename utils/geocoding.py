@@ -3,12 +3,11 @@ import re
 
 
 def get_street_name_from_address(address):
-    # Utilise une expression régulière pour extraire le nom de la rue
-    pattern = r"\d+\.\s+(.+)$"  # Ce modèle capture tout après le premier chiffre suivi d'un point et d'un espace.
+    pattern = r"\d+\.\s+(.+)$"
     match = re.search(pattern, address)
     if match:
         street_name = match.group(1)
-        return street_name.strip()  # Supprime les espaces en début et fin, au cas où.
+        return street_name.strip()
     else:
         return None
 
