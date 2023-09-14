@@ -2,6 +2,24 @@ from datetime import datetime
 from database.models import StatistiqueHistorique
 from database.session import SessionLocal
 import random
+import streamlit as st
+
+
+def calculate_revenue(adherent_count, status):
+    # Define contribution rates based on status
+    contribution_rates = {
+        "Étudiant": 5,
+        "Demandeur d'emploi": 8,
+        "Adulte": 20,
+        "Enfant": 10,
+        "Ancien étudiant de CEFIM": 9,
+    }
+
+    # Calculate revenue based on adherent count and status
+    if status in contribution_rates:
+        return adherent_count * contribution_rates[status]
+    else:
+        return 0.0
 
 
 def generate_stats_for_past_years():
@@ -29,17 +47,23 @@ def generate_stats_for_past_years():
             'ratio_enfant': 0.15 + random.uniform(-0.03, 0.03)
         }
 
-        # Ajuster les ratios pour qu'ils somment à 1
         total_ratio = sum(ratios.values())
         for key in ratios:
             ratios[key] = ratios[key] / total_ratio
 
         ratio_adulte = 1 - ratios['ratio_enfant']
 
-        # Générer un ratio pour la famille qui est indépendant
         ratio_famille = 0.3 + random.uniform(-0.05, 0.05)
 
-        # Créer un nouvel enregistrement de statistiques
+        # Calculate revenue based on adherent count and ratios
+        revenue = (
+            adherents * ratios['ratio_etudiant'] * 5 +
+            adherents * ratios['ratio_demandeur_emploi'] * 8 +
+            adherents * ratios['ratio_ancien_etudiant_cefim'] * 9 +
+            adherents * ratios['ratio_formateur_cefim'] * 0 +
+            adherents * ratio_adulte * 20
+        )
+
         stats = StatistiqueHistorique(
             year=year,
             adherent_count=adherents,
@@ -51,7 +75,8 @@ def generate_stats_for_past_years():
             ratio_formateur_cefim=ratios['ratio_formateur_cefim'],
             ratio_famille=ratio_famille,
             ratio_enfant=ratios['ratio_enfant'],
-            ratio_adulte=ratio_adulte
+            ratio_adulte=ratio_adulte,
+            revenue=revenue
         )
 
         db.add(stats)

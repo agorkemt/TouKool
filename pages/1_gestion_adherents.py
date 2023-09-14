@@ -3,7 +3,6 @@ from sqlalchemy.exc import IntegrityError
 import pandas as pd
 import datetime
 from st_aggrid import AgGrid, GridOptionsBuilder
-
 from database.queries import adherents
 from utils.geocoding import get_lat_lng_from_address
 
@@ -30,6 +29,7 @@ def get_full_address(adresse_postale, ville, code_postal):
 def submit_form():
     nom = st.session_state.get("nom", "")
     prenom = st.session_state.get("prenom", "")
+    date_naissance = st.session_state.get("date_naissance", datetime.date.today())
     adresse_postale = st.session_state.get("adresse_postale", "")
     ville = st.session_state.get("ville", "")
     code_postal = st.session_state.get("code_postal", "")
@@ -74,6 +74,7 @@ def submit_form():
         adherent_data = {
             "nom": nom,
             "prenom": prenom,
+            "date_naissance": date_naissance,
             "adresse_postale": full_address,
             "email": email,
             "genre": genre,
@@ -166,6 +167,8 @@ def display_form():
     st.write("Formulaire d'adhésion")
     st.session_state.nom = st.text_input("Nom", value=st.session_state.get("nom", ""))
     st.session_state.prenom = st.text_input("Prénom", value=st.session_state.get("prenom", ""))
+    st.session_state.date_naissance = st.date_input("Date de naissance",
+                                                    value=st.session_state.get("date_naissance", datetime.date.today()))
     st.session_state.adresse_postale = st.text_input("Adresse postale",
                                                      value=st.session_state.get("adresse_postale", ""))
     st.session_state.ville = st.text_input("Ville", value=st.session_state.get("ville", ""))

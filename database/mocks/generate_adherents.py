@@ -1,8 +1,10 @@
 import random
+from datetime import datetime, timedelta
 from faker import Faker
 from database import queries
 from geopy.geocoders import Nominatim
 
+from database.queries import adherents
 from utils import adresses_37
 
 fake = Faker('fr_FR')
@@ -19,13 +21,21 @@ def get_coordinates_from_address(address):
     return None, None
 
 
+def generate_date_of_birth(min_age, max_age):
+    """Génère une date de naissance pour une personne entre min_age et max_age."""
+    today = datetime.today()
+    birth_year = today.year - random.randint(min_age, max_age)
+    birth_month = random.randint(1, 12)
+    birth_day = random.randint(1, 28)  # Pour éviter les problèmes de jours en février
+    return datetime(birth_year, birth_month, birth_day)
+
+
 def generate_family():
     """Génère une famille avec une adresse commune."""
     nom_famille = fake.last_name()
     nombre_membres = random.randint(2, 5)
     famille = []
 
-    # Choisissez une adresse de la liste et supprimez-la pour éviter les doublons
     full_address = random.choice(adresses)
     adresses.remove(full_address)
     latitude, longitude = get_coordinates_from_address(full_address)
@@ -38,7 +48,11 @@ def generate_family():
         certificat_medical = random.choice([True, False])
         cotisation_payee = random.choice([True, False])
 
-        # Ajoutez le statut et la cotisation en fonction des critères de votre choix
+        if _ == 0:  # Assurez-vous qu'il y a au moins un adulte dans la famille
+            date_naissance = generate_date_of_birth(18, 70)
+        else:
+            date_naissance = generate_date_of_birth(6, 70)
+
         if genre == "Homme":
             statut = random.choice(["Adulte", "Étudiant"])
         else:
@@ -62,8 +76,9 @@ def generate_family():
             "cotisation_payee": cotisation_payee,
             "latitude": latitude,
             "longitude": longitude,
-            "statut": statut,  # Ajoutez le statut
-            "cotisation": cotisation  # Ajoutez la cotisation
+            "statut": statut,
+            "cotisation": cotisation,
+            "date_naissance": date_naissance
         }
         famille.append(adherent_data)
 
@@ -75,7 +90,6 @@ def generate_single():
     nom = fake.last_name()
     prenom = fake.first_name()
 
-    # Choisissez une adresse de la liste et supprimez-la pour éviter les doublons
     full_address = random.choice(adresses)
     adresses.remove(full_address)
     latitude, longitude = get_coordinates_from_address(full_address)
@@ -85,8 +99,8 @@ def generate_single():
     annee_adhesion = random.choice([2022, 2023])
     certificat_medical = random.choice([True, False])
     cotisation_payee = random.choice([True, False])
+    date_naissance = generate_date_of_birth(6, 70)
 
-    # Ajoutez le statut et la cotisation en fonction des critères de votre choix
     if genre == "Homme":
         statut = random.choice(["Adulte", "Étudiant"])
     else:
@@ -110,8 +124,9 @@ def generate_single():
         "cotisation_payee": cotisation_payee,
         "latitude": latitude,
         "longitude": longitude,
-        "statut": statut,  # Ajoutez le statut
-        "cotisation": cotisation  # Ajoutez la cotisation
+        "statut": statut,
+        "cotisation": cotisation,
+        "date_naissance": date_naissance
     }
     return adherent_data
 
@@ -127,13 +142,13 @@ def generate_adherents():
 def main():
     """Génère et ajoute des adhérents à la base de données."""
     nombre_adherents = 60
-    adherents = []
+    adherentss = []
 
     for _ in range(nombre_adherents):
-        adherents.extend(generate_adherents())
+        adherentss.extend(generate_adherents())
 
-    for adherent in adherents:
-        queries.add_adherent(adherent)
+    for adherent in adherentss:
+        adherents.add_adherent(adherent)
 
 
 if __name__ == "__main__":

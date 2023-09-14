@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, Float, create_engine
+from sqlalchemy import Column, Integer, String, Boolean, Float, Date
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -16,6 +16,7 @@ class Adherent(Base):
     annee_adhesion = Column(Integer, nullable=False, comment="Année d'adhésion de l'adhérent")
     certificat_medical = Column(Boolean, default=False, comment="Statut du certificat médical de l'adhérent")
     cotisation_payee = Column(Boolean, default=False, comment="Statut de paiement de la cotisation de l'adhérent")
+    date_naissance = Column(Date, nullable=False, comment="Date de naissance de l'adhérent")
     latitude = Column(Float, comment="Latitude de l'adresse de l'adhérent")
     longitude = Column(Float, comment="Longitude de l'adresse de l'adhérent")
     statut = Column(String, nullable=False,
@@ -39,4 +40,5 @@ class StatistiqueHistorique(Base):
     ratio_famille = Column(Float, nullable=False)
     ratio_enfant = Column(Float, nullable=False)
     ratio_adulte = Column(Float, nullable=False)
+    revenue = Column(Float, nullable=False)
 

@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy import func, select, and_
 import streamlit as st
 
@@ -154,3 +156,8 @@ def get_child_ratio():
     children = db.query(Adherent).filter(Adherent.statut == "Enfant").count()
     db.close()
     return children / total
+
+
+def calculate_age(birthdate):
+    today = datetime.date.today()
+    return today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
