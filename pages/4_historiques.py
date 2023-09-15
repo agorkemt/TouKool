@@ -29,11 +29,11 @@ df = pd.DataFrame([
 
 # Create Plotly figures
 fig1 = px.line(df, x="Année", y=["Hommes", "Femmes"], title="Évolution du Ratio Hommes/Femmes au fil des années")
-fig2 = px.line(df, x="Année", y=["Étudiant", "Demandeur d'emploi", "Ancien étudiant CEFIM", "Formateur CEFIM", "Famille"],
+fig2 = px.line(df, x="Année",
+               y=["Étudiant", "Demandeur d'emploi", "Ancien étudiant CEFIM", "Formateur CEFIM", "Famille"],
                title="Évolution des Ratios par Statut au fil des années")
 fig3 = px.line(df, x="Année", y=["Enfant", "Adulte"], title="Évolution du Ratio Enfant/Adulte au fil des années")
 fig4 = px.line(df, x="Année", y="Chiffre d'affaires", title="Évolution du Chiffre d'Affaires au fil des années")
-
 
 if __name__ == "__main__":
     tabs = st.tabs(
@@ -43,14 +43,9 @@ if __name__ == "__main__":
         st.plotly_chart(fig3)
 
     with tabs[1]:
-        col1, col2= st.columns(2)
+        st.plotly_chart(fig1)
 
-        with col1:
-            st.plotly_chart(fig1)
-
-        with col2:
-            st.plotly_chart(fig2)
+        st.plotly_chart(fig2)
 
     with tabs[2]:
         st.plotly_chart(fig4)
-

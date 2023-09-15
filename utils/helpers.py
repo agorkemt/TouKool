@@ -1,5 +1,6 @@
 import datetime
 from sqlalchemy import Enum
+from unittest.mock import patch
 
 LAST_YEAR = datetime.datetime.now().year-1
 ACTUAL_YEAR = datetime.datetime.now().year
@@ -12,3 +13,6 @@ class StatutEnum(Enum):
     DEMANDEUR_EMPLOI = ("Demandeur d'emploi", 8.0)
     ANCIEN_ETUDIANT_CEFIM = ("Ancien étudiant de CEFIM", 9.0)
     FORMATEUR_CEFIM = ("Formateur à CEFIM", 0.0)
+
+
+# Votre fonction d'envoi d'e-mail

@@ -4,7 +4,7 @@ from database.models import StatistiqueHistorique
 from database.queries.adherents import (get_gender_ratio, get_number_adherents, get_job_seeker_ratio,
                                         get_cefim_alumni_ratio,
                                         get_cefim_instructor_ratio, get_family_ratio, get_student_ratio,
-                                        get_adult_ratio, get_child_ratio)
+                                        get_adult_ratio, get_child_ratio, get_revenue)
 from database.session import SessionLocal
 from utils.helpers import LAST_YEAR
 
@@ -52,7 +52,8 @@ def record_yearly_statistics():
         ratio_formateur_cefim=get_cefim_instructor_ratio(),
         ratio_famille=get_family_ratio(),
         ratio_enfant=get_child_ratio(),
-        ratio_adulte=get_adult_ratio()
+        ratio_adulte=get_adult_ratio(),
+        revenue=get_revenue()
     )
 
     db.add(stats)

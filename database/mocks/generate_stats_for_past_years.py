@@ -85,4 +85,3 @@ def generate_stats_for_past_years():
     db.close()
 
 
-generate_stats_for_past_years()

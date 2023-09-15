@@ -4,7 +4,7 @@ import plotly.express as px
 
 from database.queries.adherents import (get_student_ratio, get_gender_ratio, get_job_seeker_ratio,
                                         get_cefim_alumni_ratio, get_cefim_instructor_ratio, get_adult_ratio,
-                                        get_child_ratio, get_adherents_by_year)
+                                        get_child_ratio, get_adherents_by_year, get_revenue)
 from database.queries.stats_history import get_all_statistiques
 from utils.helpers import ACTUAL_YEAR
 
@@ -49,8 +49,7 @@ def display_revenue_evolution():
         for stat in historical_stats
     ])
 
-    adherents_actual = get_adherents_by_year(ACTUAL_YEAR)
-    total_cotisations_actual = sum(adherent.cotisation for adherent in adherents_actual)
+    total_cotisations_actual = get_revenue()
 
     fig = px.line(df, x="Année", y="Chiffre d'affaires", title="Évolution du Chiffre d'Affaires au fil des années", color="Légende")
 

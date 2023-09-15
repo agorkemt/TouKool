@@ -106,6 +106,8 @@ def submit_form():
 def display_adherents():
     st.write(f"Liste des adhérents encore sous l'année {LAST_YEAR}")
     search_text = st.text_input("Rechercher un adhérent par nom et/ou prénom", key="search_text")
+    if st.button("Rafraîchir"):
+        st.session_state.refresh_table = not st.session_state.get("refresh_table", False)
     addAdherents = adherents.get_adherents_by_year(LAST_YEAR)
     adherents_data = [{
         "id": adherent.id,
@@ -162,8 +164,25 @@ def display_adherents():
             st.session_state.annee_adhesion = selected_row["annee_adhesion"]
             st.session_state.certificat_medical = selected_row["certificat_medical"]
             st.session_state.cotisation_payee = selected_row["cotisation_payee"]
-        else:
-            st.session_state.selection_made = False
+
+            if not st.session_state.get('delete_success', False):
+                if st.button("Supprimer"):
+                    st.session_state.delete_clicked = True
+
+                if st.session_state.get('delete_clicked'):
+                    if st.checkbox("Êtes-vous sûr de vouloir supprimer cet adhérent ?"):
+                        st.write(f"ID de l'adhérent sélectionné : {st.session_state.selected_adherent_id}")
+                        try:
+                            adherents.delete_adherent(st.session_state.selected_adherent_id)
+                            st.success("L'adhérent a été supprimé avec succès!")
+                            st.session_state.selected_adherent_id = None
+                            st.session_state.delete_clicked = False
+                            st.session_state.delete_success = True
+                        except Exception as e:
+                            st.error(f"Une erreur s'est produite lors de la suppression: {e}")
+            else:
+                st.session_state.selection_made = False
+                st.session_state.delete_success = False
 
 
 def display_form():

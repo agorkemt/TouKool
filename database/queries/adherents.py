@@ -1,8 +1,7 @@
-import datetime
-
+from sqlalchemy import not_
+from datetime import datetime
 from sqlalchemy import func, select, and_
 import streamlit as st
-
 from utils.helpers import ACTUAL_YEAR
 from database.session import SessionLocal
 from database.models import Adherent
@@ -43,6 +42,33 @@ def add_adherent(adherent_data):
         db.close()
 
 
+def delete_adherent(adherent_id):
+    print(adherent_id)
+    db = SessionLocal()
+    try:
+        adherent = db.query(Adherent).filter(Adherent.id == adherent_id).one()
+        db.delete(adherent)
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise e
+    finally:
+        db.close()
+
+
+def delete_multiple_adherents(adherent_ids):
+    db = SessionLocal()
+    try:
+        adherents_to_delete = db.query(Adherent).filter(Adherent.id.in_(adherent_ids))
+        adherents_to_delete.delete(synchronize_session=False)
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise e
+    finally:
+        db.close()
+
+
 def get_adherents(search=None):
     session = SessionLocal()
     try:
@@ -54,12 +80,28 @@ def get_adherents(search=None):
         session.close()
 
 
+def get_adherents_without_payment():
+    db = SessionLocal()
+    try:
+        unpaid_adherents = db.query(Adherent).filter(
+            not_(Adherent.cotisation_payee), Adherent.annee_adhesion == ACTUAL_YEAR
+        ).all()
+        return unpaid_adherents
+    except Exception as e:
+        raise e
+    finally:
+        db.close()
+
+
 def modify_adherent(adherent_data, adherent_id):
     session = SessionLocal()
     try:
         adherent = session.query(Adherent).filter(Adherent.id == adherent_id).one()
 
         for key, value in adherent_data.items():
+            # Vérifiez si la colonne est 'date_naissance' et effectuez la conversion si nécessaire
+            if key == 'date_naissance':
+                value = datetime.fromisoformat(value)
             setattr(adherent, key, value)
 
         session.commit()
@@ -161,3 +203,9 @@ def get_child_ratio():
 def calculate_age(birthdate):
     today = datetime.date.today()
     return today.year - birthdate.year - ((today.month, today.day) < (birthdate.month, birthdate.day))
+
+
+def get_revenue():
+    adherents_actual = get_adherents_by_year(ACTUAL_YEAR)
+    total_cotisations_actual = sum(adherent.cotisation for adherent in adherents_actual)
+    return total_cotisations_actual

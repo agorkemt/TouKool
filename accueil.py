@@ -21,7 +21,6 @@ def display_header():
     # Les colonnes 1 et 5 agissent comme des "marges" pour centrer le contenu.
     col1, col2, col3, col4, col5 = st.columns([1, 2, 6, 2, 1])
 
-
     with col3:
         with st.container():
             col_img, col_text = st.columns([2, 8])
@@ -52,12 +51,16 @@ def display_metrics():
         with col4:
             col4.metric(f"Adhérents saison {ACTUAL_YEAR}", f"{adherents_this_year}", delta_adherents)
 
+
 def main():
     show_pages([
         Page("accueil.py", "Acceuil"),
+        Page("pages/1_saison_courrante.py", f"Saison {ACTUAL_YEAR}"),
         Page("pages/2_cartographie.py", "Cartographie des adhérents"),
         Page("pages/3_statistiques.py", "Statistiques"),
         Page("pages/4_historiques.py", "Historique"),
+        Page("pages/5_export_donnees.py", "Exporter les données"),
+        Page("pages/6_mentions_legales.py", "Mentions légales"),
     ])
 
     display_header()
